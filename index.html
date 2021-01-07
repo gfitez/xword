@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-dark">
+  <a class="navbar-brand text-light" href="#">Crossword Stats</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="#">Data<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-light" href="#">Replay</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-light" href="#">Stats<span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<canvas id="c" class="border"></canvas>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+
+<div id="clock">
+</div>
+
+<script src="clock/analogClock.js"></script>
+<script>
+var opt = new AnalogClockOption(); opt.width = 100;
+var clock = new AnalogClock("clock", opt);
+clock.panel.style.border = "solid 0px red";
+clearInterval(clock.loop)
+
+c=document.getElementById("c")
+c.width=500;
+c.height=500;
+xWordData={}
+function readXWordData(file,callback)
+{
+  var rawFile = new XMLHttpRequest();
+  rawFile.open("GET", file, false);
+  rawFile.onreadystatechange = function (){
+    if(rawFile.readyState === 4 && (rawFile.status === 200 || rawFile.status == 0)){
+      console.log(JSON.parse(rawFile.responseText))
+      xWordData=rawFile.responseText
+      callback(JSON.parse(rawFile.responseText));
+    }
+  }
+  rawFile.send(null);
+}
+function displayXWord(data,c){
+  console.log(data)
+  var ctx=c.getContext("2d")
+
+  var cellCount=data.board.cells.length
+  var length=Math.sqrt(cellCount)
+  if(length%1!=0){
+    throw "Not square!"
+  }
+
+  cellWidth=c.width/length
+  cellHeight=c.height/length
+  ctx.fillStyle="black"
+  ctx.textAlign = 'center';
+  ctx.font = length*2+'px serif';
+
+  ctx.textBaseline = "middle";
+  for(var row=0;row<length;row++){
+    for(var col=0;col<length;col++){
+      i=row*length+col;
+      square=data.board.cells[i]
+      if(square.blank==true){
+        ctx.fillRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
+      }else{
+        ctx.strokeRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
+        ctx.fillText(square.guess,(col+0.5)*cellWidth,(row+0.5)*cellHeight)
+      }
+
+    }
+  }
+}
+function displayProgression(data,c,timestamp){
+
+  var ctx=c.getContext("2d")
+
+  var cellCount=data.board.cells.length
+  var length=Math.sqrt(cellCount)
+  if(length%1!=0){
+    throw "Not square!"
+  }
+
+  cellWidth=c.width/length
+  cellHeight=c.height/length
+  ctx.fillStyle="black"
+  ctx.textAlign = 'center';
+  ctx.font = length*2+'px serif';
+
+  ctx.textBaseline = "middle";
+  ctx.clearRect(0,0,c.width,c.height)
+  allFilled=true;
+  for(var row=0;row<length;row++){
+    for(var col=0;col<length;col++){
+      i=row*length+col;
+      square=data.board.cells[i]
+      if(square.blank==true){
+        ctx.fillRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
+      }else {
+        ctx.strokeRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
+        if(square.timestamp<timestamp){
+          ctx.fillText(square.guess,(col+0.5)*cellWidth,(row+0.5)*cellHeight)
+        }else{
+          allFilled=false
+        }
+      }
+    }
+  }
+  var date=new Date((parseInt(data.minGuessTime)+timestamp)*1000)
+  clock.setTime(date)
+
+  if(allFilled==false){
+    setTimeout(function(){displayProgression(data,c,(timestamp+1))},1)
+
+  }
+}
+readXWordData("xword.json",function(x){
+  //displayXWord(x,c,0)
+})
+
+</script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+#c{
+  border:"1px solid black";
+}
+</style>
+</body>

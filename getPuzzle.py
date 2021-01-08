@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-key= os.getenv('NYT-S')
+key= os.getenv('key')
 
 
 
@@ -27,9 +27,15 @@ def getDailyPuzzle(date):
 #Get stats for puzzle
 def getDailyStats(puzzleId):
     url=statsUrl.format(puzzleId)
-    x = requests.get(url,cookies=cookies);
+    res = requests.get(url,cookies=cookies);
+    x=json.loads(res.text)
+    if(bool(x["calcs"])):
+        x["hasStats"]=True;
+    else:
+        x["hasStats"]=False;
 
-    return json.loads(x.text)
+
+    return x
 
 #Get puzzles stored in xword.json
 def getSavedPuzzles():
@@ -66,7 +72,7 @@ def getPuzzleRange(startDate,endDate):
 
 if __name__=="__main__":
     puzzleData=getSavedPuzzles()
-    startDate=datetime.strptime("2021-1-1","%Y-%m-%d")
+    startDate=datetime.strptime("2020-1-1","%Y-%m-%d")
     endDate=datetime.strptime("2021-1-7","%Y-%m-%d")
     puzzleData.update(getPuzzleRange(startDate,endDate))
     savePuzzleJSON(puzzleData)

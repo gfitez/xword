@@ -1,146 +1,110 @@
 <!DOCTYPE html>
 <head>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="index.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-  <a class="navbar-brand text-light" href="#">Crossword Stats</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link text-light" href="#">Data<span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-light" href="#">Replay</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link text-light" href="#">Stats<span class="sr-only">(current)</span></a>
-      </li>
-    </ul>
+<div class="jumbotron">
+    <div class="container">
+      <h1 class="display-3">New York Times Crossword Puzzle Statistics</h1>
+    </div>
   </div>
-</nav>
+  <div class="container ">
+    <div class="row statRow">
+      <div class="col border border-dark">
+        <div class="display-5 statTitle">Crosswords attempted:</div>
+        <span class="stat bigText" id="attempted">100</span>
+      </div>
+      <div class="col bg-dark text-light border border-dark">
+        <div class="statTitle">Crosswords Solved:</div>
+        <span class="stat bigText" id="solved">100</span>
+      </div>
+      <div class="col border border-dark">
+        <div class="statTitle">Solve Rate:</div>
+        <span class="stat bigText" id="solveRate">100</span>
+      </div>
+      <div class="col bg-dark text-light border border-dark">
+        <div class="statTitle">First Puzzle:</div>
+        <span id="firstPuzzle" class="stat h1"></span>
+      </div>
+    </div>
+    <div class="row statRow">
+      <div class="col bg-dark text-light border border-dark">
+        <div class="statTitle">Time Spent Solving: </div>
+        <span class="stat" id="timeSpent" style='font-size:1.5vw'>100</span>
+      </div>
+      <div class="col border border-dark">
+        <div class="statTitle">Average Time of Day:</div>
+        <span class="stat medText" id="averageTimeOfDay"></span>
+      </div>
+      <div class="col bg-dark text-light border border-dark">
+        <div class="statTitle">Fastest Time:</div>
+        <span class="stat" id="fastestTime"></span>
+        <div class="statTitle">On</div>
+        <span class="stat" id="fastestTimeDay"></span>
+      </div>
+      <div class="col border border-dark">
+        <div class="statTitle">Slowest Time:</div>
+        <span class="stat" id="slowestTime"></span>
+        <div class="statTitle">On</div>
+        <span class="stat" id="slowestTimeDay"></span
+      </div>
+    </div>
+    <div class="row statRow">
+      <div class="col border border-dark">
+        <div class="statTitle">Most Recent Puzzle:</div>
+        <span class="stat" id="mostRecent"></span>
+      </div>
+      <div class="col bg-dark text-light border border-dark">
+        <div class="statTitle">Favorite Day(s):</div>
+        <span id="favoriteDay" class="stat"></span>
+        <div class="statTitle">With</div>
+        <span id="favoriteDayCount" class="stat"></span>
+        <div class="statTitle">Completed</div>
+      </div>
+      <div class="col border border-dark">
+        <div class="statTitle">Number of clues answered:</div>
+        <span id="cluesAnswered" class="stat"></span>
+      </div>
+      <div class="col bg-dark text-light border border-dark">
+        <div class="statTitle">Number of squares filled:</div>
+        <span id="squaresFilled" class="stat"></span>
+      </div>
+    </div>
+  </div>
 
 
-<canvas id="c" class="border"></canvas>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 
 
-<div id="clock">
+<div id="replay">
+
 </div>
 
-<script src="clock/analogClock.js"></script>
-<script>
-var opt = new AnalogClockOption(); opt.width = 100;
-var clock = new AnalogClock("clock", opt);
-clock.panel.style.border = "solid 0px red";
-clearInterval(clock.loop)
 
-c=document.getElementById("c")
-c.width=500;
-c.height=500;
-xWordData={}
-function readXWordData(file,callback)
-{
-  var rawFile = new XMLHttpRequest();
-  rawFile.open("GET", file, false);
-  rawFile.onreadystatechange = function (){
-    if(rawFile.readyState === 4 && (rawFile.status === 200 || rawFile.status == 0)){
-      console.log(JSON.parse(rawFile.responseText))
-      xWordData=rawFile.responseText
-      callback(JSON.parse(rawFile.responseText));
-    }
-  }
-  rawFile.send(null);
-}
-function displayXWord(data,c){
-  console.log(data)
-  var ctx=c.getContext("2d")
 
-  var cellCount=data.board.cells.length
-  var length=Math.sqrt(cellCount)
-  if(length%1!=0){
-    throw "Not square!"
-  }
 
-  cellWidth=c.width/length
-  cellHeight=c.height/length
-  ctx.fillStyle="black"
-  ctx.textAlign = 'center';
-  ctx.font = length*2+'px serif';
+<div id="stats">
 
-  ctx.textBaseline = "middle";
-  for(var row=0;row<length;row++){
-    for(var col=0;col<length;col++){
-      i=row*length+col;
-      square=data.board.cells[i]
-      if(square.blank==true){
-        ctx.fillRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
-      }else{
-        ctx.strokeRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
-        ctx.fillText(square.guess,(col+0.5)*cellWidth,(row+0.5)*cellHeight)
-      }
-
-    }
-  }
-}
-function displayProgression(data,c,timestamp){
-
-  var ctx=c.getContext("2d")
-
-  var cellCount=data.board.cells.length
-  var length=Math.sqrt(cellCount)
-  if(length%1!=0){
-    throw "Not square!"
-  }
-
-  cellWidth=c.width/length
-  cellHeight=c.height/length
-  ctx.fillStyle="black"
-  ctx.textAlign = 'center';
-  ctx.font = length*2+'px serif';
-
-  ctx.textBaseline = "middle";
-  ctx.clearRect(0,0,c.width,c.height)
-  allFilled=true;
-  for(var row=0;row<length;row++){
-    for(var col=0;col<length;col++){
-      i=row*length+col;
-      square=data.board.cells[i]
-      if(square.blank==true){
-        ctx.fillRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
-      }else {
-        ctx.strokeRect(col*cellWidth,row*cellHeight,cellWidth,cellHeight)
-        if(square.timestamp<timestamp){
-          ctx.fillText(square.guess,(col+0.5)*cellWidth,(row+0.5)*cellHeight)
-        }else{
-          allFilled=false
-        }
-      }
-    }
-  }
-  var date=new Date((parseInt(data.minGuessTime)+timestamp)*1000)
-  clock.setTime(date)
-
-  if(allFilled==false){
-    setTimeout(function(){displayProgression(data,c,(timestamp+1))},1)
-
-  }
-}
-readXWordData("xword.json",function(x){
-  //displayXWord(x,c,0)
-})
-
-</script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+</div>
 <style>
-#c{
-  border:"1px solid black";
+.statRow{
+  height:400px;
+  font-size:1.5rem;
+  font-family:apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+.bigText{
+  font-size:4vw;
+}
+.medText{
+  font-size:3vw;
+}
+.statTitle{
+  font-weight:800;
 }
 </style>
+
 </body>

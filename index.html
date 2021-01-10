@@ -3,98 +3,175 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"></link>
+  <script src="utils.js"></script>
+  <script src="fillCharts.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="index.js"></script>
 </head>
 <body>
 <div class="jumbotron">
-    <div class="container">
-      <h1 class="display-3">New York Times Crossword Puzzle Statistics</h1>
-    </div>
+  <div class="container">
+    <h1 class="display-3">New York Times Crossword Puzzle Statistics</h1>
   </div>
-  <div class="container ">
-    <div class="row statRow">
-      <div class="col border border-dark">
-        <div class="display-5 statTitle">Crosswords attempted:</div>
-        <span class="stat bigText" id="attempted">100</span>
-      </div>
-      <div class="col bg-dark text-light border border-dark">
-        <div class="statTitle">Crosswords Solved:</div>
-        <span class="stat bigText" id="solved">100</span>
-      </div>
-      <div class="col border border-dark">
-        <div class="statTitle">Solve Rate:</div>
-        <span class="stat bigText" id="solveRate">100</span>
-      </div>
-      <div class="col bg-dark text-light border border-dark">
-        <div class="statTitle">First Puzzle:</div>
-        <span id="firstPuzzle" class="stat h1"></span>
-      </div>
-    </div>
-    <div class="row statRow">
-      <div class="col bg-dark text-light border border-dark">
-        <div class="statTitle">Time Spent Solving: </div>
-        <span class="stat" id="timeSpent" style='font-size:1.5vw'>100</span>
-      </div>
-      <div class="col border border-dark">
-        <div class="statTitle">Average Time of Day:</div>
-        <span class="stat medText" id="averageTimeOfDay"></span>
-      </div>
-      <div class="col bg-dark text-light border border-dark">
-        <div class="statTitle">Fastest Time:</div>
-        <span class="stat" id="fastestTime"></span>
-        <div class="statTitle">On</div>
-        <span class="stat" id="fastestTimeDay"></span>
-      </div>
-      <div class="col border border-dark">
-        <div class="statTitle">Slowest Time:</div>
-        <span class="stat" id="slowestTime"></span>
-        <div class="statTitle">On</div>
-        <span class="stat" id="slowestTimeDay"></span
-      </div>
-    </div>
-    <div class="row statRow">
-      <div class="col border border-dark">
-        <div class="statTitle">Most Recent Puzzle:</div>
-        <span class="stat" id="mostRecent"></span>
-      </div>
-      <div class="col bg-dark text-light border border-dark">
-        <div class="statTitle">Favorite Day(s):</div>
-        <span id="favoriteDay" class="stat"></span>
-        <div class="statTitle">With</div>
-        <span id="favoriteDayCount" class="stat"></span>
-        <div class="statTitle">Completed</div>
-      </div>
-      <div class="col border border-dark">
-        <div class="statTitle">Number of clues answered:</div>
-        <span id="cluesAnswered" class="stat"></span>
-      </div>
-      <div class="col bg-dark text-light border border-dark">
-        <div class="statTitle">Number of squares filled:</div>
-        <span id="squaresFilled" class="stat"></span>
-      </div>
-    </div>
-  </div>
-
-
-
-
-
-<div id="replay">
-
 </div>
 
 
 
+<div class="container ">
+  <h1 class="display-4">Overall Stats</h1>
+  <div class="row statRow">
+    <div class="col border border-dark">
+      <div class="display-5 statTitle">Crosswords attempted:</div>
+      <span class="stat bigText" id="attempted">100</span>
+    </div>
+    <div class="col bg-dark text-light border border-dark">
+      <div class="statTitle">Crosswords Solved:</div>
+      <span class="stat bigText" id="solved">100</span>
+    </div>
+    <div class="col border border-dark">
+      <div class="statTitle">Solve Rate:</div>
+      <span class="stat bigText" id="solveRate">100</span>
+    </div>
+    <div class="col bg-dark text-light border border-dark">
+      <div class="statTitle">First Puzzle:</div>
+      <span id="firstPuzzle" class="stat h1"></span>
+    </div>
+  </div>
+  <div class="row statRow">
+    <div class="col bg-dark text-light border border-dark">
+      <div class="statTitle">Time Spent Solving: </div>
+      <span class="stat" id="timeSpent" style='font-size:1.5vw'>100</span>
+    </div>
+    <div class="col border border-dark">
+      <div class="statTitle">Average Time of Day:</div>
+      <span class="stat medText" id="averageTimeOfDay"></span>
+    </div>
+    <div class="col bg-dark text-light border border-dark">
+      <div class="statTitle">Fastest Time:</div>
+      <span class="stat" id="fastestTime"></span>
+      <div class="statTitle">On</div>
+      <span class="stat" id="fastestTimeDay"></span>
+    </div>
+    <div class="col border border-dark">
+      <div class="statTitle">Slowest Time:</div>
+      <span class="stat" id="slowestTime"></span>
+      <div class="statTitle">On</div>
+      <span class="stat" id="slowestTimeDay"></span>
+    </div>
+  </div>
+  <div class="row statRow" stlye="padding:10px">
+    <div class="col border border-dark">
+      <div class="statTitle">Most Recent Puzzle:</div>
+      <span class="stat medText" id="mostRecent"></span>
+    </div>
+    <div class="col bg-dark text-light border border-dark">
+      <div class="statTitle">Most common day(s):</div>
+      <span id="favoriteDay" class="stat"></span>
+      <div class="statTitle">With</div>
+      <span id="favoriteDayCount" class="medText stat"></span>
+      <div class="statTitle">Completed</div>
+    </div>
+    <div class="col border border-dark">
+      <div class="statTitle">Number of clues answered:</div>
+      <span id="cluesAnswered" class="bigText stat"></span>
+    </div>
+    <div class="col bg-dark text-light border border-dark">
+      <div class="statTitle">Number of squares filled:</div>
+      <span id="squaresFilled" class="bigText stat"></span>
+    </div>
+  </div>
+</div>
+  <br>
+  <br>
+  <br>
+<hr class="mt-2 mb-3"/>
+<div class="container ">
+<h1 class="display-2">Trends</h1>
+<br><Br>
+<span class="display-4" style="font-size:30px">Hourly breakdown:</span>
 
-<div id="stats">
+<div class="btn-group btn-group-toggle" data-toggle="buttons" onclick>
+  <label class="btn btn-secondary active">
+    <input type="radio" name="options"  checked onchange="$('#timeOfDay').toggle(); $('#dailyTimeOfDay').toggle();"> Overall
+  </label>
+  <label class="btn btn-secondary" >
+    <input type="radio" name="options" id="option2" onchange="$('#timeOfDay').toggle(); $('#dailyTimeOfDay').toggle();"> By day of week
+  </label>
+</div>
+<br>
+<Br>
+Of the days that a crossword was completed, what percent of each hour were you working?
+<canvas id="timeOfDay" class="border"></canvas>
+<canvas id="dailyTimeOfDay" class="border" style="display:none"></canvas>
+
+
+<br>
+<Br>
+<hr class="mt-2 mb-3"/>
+<br>
+<Br>
+<span class="display-4" style="font-size:30px">Solve Time:</span>
+<canvas id="solveTime" class="border"></canvas>
+
+<br>
+<Br>
+<hr class="mt-2 mb-3"/>
+<br>
+<Br>
+<span class="display-4" style="font-size:30px">Squares Filled:</span>
+<div class="btn-group btn-group-toggle" data-toggle="buttons" onclick>
+  <label class="btn btn-secondary active">
+    <input type="radio" name="options"  checked onchange="$('#squaresFilledChart').toggle(); $('#dailySquaresFilledChart').toggle();"> Overall
+  </label>
+  <label class="btn btn-secondary" >
+    <input type="radio" name="options" id="option2" onchange="$('#squaresFilledChart').toggle(); $('#dailySquaresFilledChart').toggle();"> By day of week
+  </label>
+</div>
+
+<canvas id="squaresFilledChart" class="border"></canvas>
+<canvas id="dailySquaresFilledChart" class="border" style="display:none"></canvas>
 
 </div>
+
+<hr class="mt-2 mb-3"/>
+<div class="container ">
+<h1 class="display-2">Board Specific:</h1>
+
+
+Select a date: <input type="text" id="datepicker" onchange="loadBoard(this.value)" value="01/01/2021">
+
+
+<script>
+function addDatePicker(){
+  $('#datepicker').datepicker({
+    beforeShowDay:function(date){
+      return stats["doneDates"].indexOf(toNYTDateFormat(date))!=-1
+    }
+  });
+}
+
+
+</script>
+<button class="btn bg-dark text-light" onclick="watchReplay()">Watch replay</button>
+<br>
+<canvas id="puzzle"></canvas>
+<canvas id="puzzleGraph" class="border"></canvas>
+</div>
+
 <style>
 .statRow{
-  height:400px;
   font-size:1.5rem;
+  height:250px;
+  text-align: center;
   font-family:apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+.stat{
+  height:250px;
+
 }
 .bigText{
   font-size:4vw;
@@ -104,6 +181,14 @@
 }
 .statTitle{
   font-weight:800;
+}
+#timeOfDay{
+  width:50em;
+  height:30em;
+}
+#puzzle{
+  width:400;
+  height:400;
 }
 </style>
 

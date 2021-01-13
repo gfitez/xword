@@ -111,6 +111,7 @@ function dailyTimeOfDayChart(){
 }
 
 function solveTimeChart(){
+  let averageWidth=0.03
   var solveTimeCtx = document.getElementById('solveTime').getContext('2d');
 
   var datasets=[]
@@ -130,7 +131,7 @@ function solveTimeChart(){
       borderWidth: 4,
       pointRadius: 0,
     }
-    data=stats["dailySolveTimes"][i]
+    data=runningAverage(stats["dailySolveTimes"][i],stats["dailySolveTimes"][i].length*averageWidth)
     //TODO: set cutoff
     for(var j=0;j<data.length;j++){
       if(data[j]>2*60*60){

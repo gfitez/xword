@@ -4,6 +4,7 @@ import csv
 from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
+from progress.bar import ShadyBar
 
 load_dotenv()
 
@@ -63,16 +64,18 @@ def getPuzzleData(date):
 def getPuzzleRange(startDate,endDate):
     date=startDate
     data={}
+    bar = ShadyBar('Getting Crossword Data: ', max=(endDate-startDate).days)
     while(date<=endDate):
-        print("Getting Puzzle For "+formatDate(date))
+        #print("Getting Puzzle For "+formatDate(date))
         data[formatDate(date)]=getPuzzleData(date)
         date=date+timedelta(days=1)
+        bar.next()
     return data
 
 
 if __name__=="__main__":
     puzzleData=getSavedPuzzles()
-    startDate=datetime.strptime("2021-1-1","%Y-%m-%d")
+    startDate=datetime.strptime("2020-1-1","%Y-%m-%d")
     endDate=datetime.strptime("2021-1-12","%Y-%m-%d")
     puzzleData.update(getPuzzleRange(startDate,endDate))
     savePuzzleJSON(puzzleData)

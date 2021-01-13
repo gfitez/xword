@@ -1,6 +1,6 @@
 colors=["#CC99C9","#9EC1CF","#9EE09E","#FDFD97 ","#FEB144 ","#FF6663","#cccccc"]
 function dayOfWeek(n){
-  return ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"][n]
+  return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][n]
 }
 function formatSeconds(n){
   string=""
@@ -21,6 +21,12 @@ function formatSeconds(n){
   string+=Math.floor(n)+" seconds"
   return string
 }
+
+//get number of seconds since midnight
+function secondsOfDay(date){
+  return date.getSeconds() + (60 * date.getMinutes()) + (60 * 60 * date.getHours());
+}
+
 function formatSecondsShort(n){
   string=""
   started=false;
@@ -67,8 +73,12 @@ function formatDayList(arr){
 }
 
 function reformatDate(date){
-  date=new Date(date)
+  date=new Date(new Date(date).getTime()+(new Date()).getTimezoneOffset()*60*1000)
   return dayOfWeek(date.getDay())+" "+(date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear()
+}
+
+function NYTFormatToDate(date){
+  return (new Date(new Date(date).getTime()+(new Date()).getTimezoneOffset()*60*1000))
 }
 
 function toNYTDateFormat(date){

@@ -72,7 +72,7 @@ def getPuzzleRange(startDate,endDate):
 
 if __name__=="__main__":
     puzzleData=getSavedPuzzles()
-    startDate=datetime.strptime("2020-10-1","%Y-%m-%d")
-    endDate=datetime.strptime("2021-1-10","%Y-%m-%d")
+    startDate=datetime.strptime("2021-1-1","%Y-%m-%d")
+    endDate=datetime.strptime("2021-1-12","%Y-%m-%d")
     puzzleData.update(getPuzzleRange(startDate,endDate))
     savePuzzleJSON(puzzleData)

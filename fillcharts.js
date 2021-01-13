@@ -118,18 +118,31 @@ function solveTimeChart(){
   for(day of stats["dailySolveTimes"]){
     if(day.length>maxLength)maxLength=day.length;
   }
-  labels=[...Array(maxLength).keys()];
+
+  var labels=[]
+  for(var i=1;i<=maxLength;i++)labels.push(i)
 
   for(i in stats["dailySolveTimes"]){
     dataset={
       label: dayOfWeek(i),
       borderColor: colors[i],
       fill:false,
-      borderWidth: 4
+      borderWidth: 4,
+      pointRadius: 0,
+    }
+    data=stats["dailySolveTimes"][i]
+    //TODO: set cutoff
+    for(var j=0;j<data.length;j++){
+      if(data[j]>2*60*60){
+        data.splice(j,1)
+        i--;
+      }
     }
 
-    dataset.data=stats["dailySolveTimes"][i]
+    dataset.data=data;
     datasets.push(dataset)
+
+
   }
 
 

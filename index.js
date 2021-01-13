@@ -2,22 +2,29 @@ $( document ).ready(function() {
   loadXWordData()
 });
 
+
 //getData from xword.json
 xWordData=null;
 function loadXWordData(){
   var rawFile = new XMLHttpRequest();
   rawFile.open("GET", "xword.json", false);
   rawFile.onreadystatechange = function (){
+
     if(rawFile.readyState === 4 && (rawFile.status === 200 || rawFile.status == 0)){
       console.log(JSON.parse(rawFile.responseText))
       xWordData=JSON.parse(rawFile.responseText)
       dataReady()
       updateHTML()
-
+    }else{
+      throw "file error"
     }
+
   }
   rawFile.send(null);
 }
+
+
+
 stats={
   "totalStarted":0,
   "totalSolved":0,
@@ -32,13 +39,14 @@ stats={
   "first":"",
   "firstDate":Infinity,
   "mostRecent":"",
-  "mostRecentDate":-Infinity,
+  "mostRecentDate":"1-1-1700",
   "fastest":"",
   "fastestTime":Infinity,
   "slowest":"",
   "slowestTime":-Infinity,
   "totalSolveTime":0,
   "averageTimeOfDay":0,
+  "medianTimeOfDay":0,
   "bestDay":0,
   "squaresFilled":0,
   "clueCount":0,
@@ -46,29 +54,29 @@ stats={
   "dailyBoardPercentFilled":[[],[],[],[],[],[],[]],
   "avgDailyBoardPercentFilled":[0,0,0,0,0,0,0],
   "doneDates":[],
+  "maxTimeCutoff":2.5*60*60
 }
 
-//get number of seconds since midnight
-function secondsOfDay(date){
-  return date.getSeconds() + (60 * date.getMinutes()) + (60 * 60 * date.getHours());
-}
+
 
 
 //populate stats
 function dataReady(){
-
-
   //loop through each crossword
   for(key of Object.keys(xWordData)){
     var puzzle=xWordData[key]
-    var dayOFWeek=(new Date(puzzle["puzzle_meta"]["printDate"])).getDay()
+    var dayOFWeek=NYTFormatToDate(puzzle["puzzle_meta"]["printDate"]).getDay()
 
+    //if puzzle has been opened
     if(puzzle["firsts"] && puzzle["firsts"]["opened"]){stats["totalStarted"]+=1;}
+
+    //if the puzzle has been solved
     if(puzzle["calcs"] && puzzle["calcs"]["solved"]){
       stats["doneDates"].push(key)
       stats["totalSolved"]++;
       stats["dailySolved"][dayOFWeek]++;
 
+      //solve time
       solveTime=parseInt(puzzle["calcs"]["secondsSpentSolving"])
       stats["solveTimes"].push(solveTime)
       stats["dailySolveTimes"][dayOFWeek].push(solveTime)
@@ -77,7 +85,7 @@ function dataReady(){
       stats["totalSolveTime"]+=(solveTime)
 
 
-      //slowest and fastest time
+      //check if it slowest or fastest time
       if(solveTime<stats["fastestTime"]){
         stats["fastestTime"]=solveTime;
         stats["fastest"]=key
@@ -88,9 +96,9 @@ function dataReady(){
       }
 
 
-      //most recent and first
+      //check if it is the most recent and first puzzle
       var completedDate=puzzle["firsts"]["solved"]
-      if(completedDate>stats["mostRecentDate"]){
+      if(new Date(completedDate)>new Date(stats["mostRecentDate"])){
         stats["mostRecentDate"]=completedDate
         stats["mostRecent"]=key
       }
@@ -100,7 +108,7 @@ function dataReady(){
       }
 
 
-      //squares filled
+      //count total number of squares (not including black(null) squares)
       var squareCount=0;
       for(var i=0;i<puzzle["puzzle_data"]["answers"].length;i++){
         if(puzzle["puzzle_data"]["answers"][i]!=null){
@@ -109,6 +117,7 @@ function dataReady(){
       }
       stats["squaresFilled"]+=squareCount
 
+      //get number of clues
       stats["clueCount"]+=puzzle["puzzle_data"]["clues"]["A"].length
       stats["clueCount"]+=puzzle["puzzle_data"]["clues"]["D"].length
 
@@ -118,6 +127,8 @@ function dataReady(){
       var cluesFilled=0;
       var time=0;
       var percentFilled=[]
+
+      //generate an array "squares" only containing non-null squares
       squares=puzzle["board"]["cells"]
       for(var i=0;i<squares.length;i++){
         if(squares[i]==null){
@@ -127,8 +138,11 @@ function dataReady(){
       }
 
 
+      //
       do{
         percentFilled.push(0)
+
+        //count number of filled squares for given time
         for(var i=0;i<squares.length;i++){
           var timestamp=puzzle["board"]["cells"][i]["timestamp"]
           if(timestamp && timestamp<time){
@@ -138,8 +152,11 @@ function dataReady(){
         percentFilled[percentFilled.length-1]/=squareCount;
         time+=increment
 
-      }while(percentFilled[percentFilled.length-1]<1 && percentFilled.length*increment<2.5*60*60)
-      if(percentFilled.length*increment<2.5*60*60){
+      //while board is unfilled and we haven't reached the time cutoff
+      }while(percentFilled[percentFilled.length-1]<1 && percentFilled.length*increment<stats["maxTimeCutoff"])
+
+      //log data if time didn't take longer than the cutoff
+      if(percentFilled.length*increment<stats["maxTimeCutoff"]){
         stats["boardPercentFilled"].push(percentFilled)
         stats["dailyBoardPercentFilled"][dayOFWeek].push(percentFilled)
         puzzle["percentFilled"]=percentFilled
@@ -151,18 +168,22 @@ function dataReady(){
 
   }
 
-  //calculate average board solve graph
+  //calculate average board solve graph by averaging the percent filled vs. time graphs
   var avgPercentFilled=[];
-  var done=false;
+
   var index=0;
+
+  //loop through each time and average the percetn filled for each day
   do{
-    done=true;
+
     avgPercentFilled.push(0)
+
+    //average all percent filleds at that time
     for(var j in stats["boardPercentFilled"]){
       if(index>=stats["boardPercentFilled"][j].length){
         avgPercentFilled[index]+=1
       }else{
-        done=false;
+
         avgPercentFilled[index]+=stats["boardPercentFilled"][j][index]
       }
 
@@ -199,7 +220,8 @@ function dataReady(){
 
   }
 
-  //get best day
+
+  //get best day (day of week with most crosswords solved)
   stats["bestDay"]=[]
   max=0
   for(var i=0;i<stats["dailySolved"].length;i++){
@@ -224,6 +246,7 @@ function dataReady(){
   //of the days where a crossword was completed, what hours were they  on
 
   //spacing between points to check when crossword was completed (in secs)
+  var workingTimes=[]
   var increment=60*10
   var entryCount=0//keep track of how many sections crosswodr was being done in order to divide for weighted average to calculated average time of day.
   for(var i=0;i<24*60*60;i+=increment){
@@ -246,11 +269,14 @@ function dataReady(){
           stats["dailySolvingPercentageOfDay"][dayOfWeek][stats["dailySolvingPercentageOfDay"][dayOfWeek].length-1]+=1
           entryCount+=1;
           stats["averageTimeOfDay"]+=i
+          workingTimes.push(i)
         }
 
 
       }
     }
+
+    stats["medianTimeOfDay"]=workingTimes[Math.floor(workingTimes.length/2)]
     //divide by total completed to get percentage
     stats["solvingPercentOfDay"][stats["solvingPercentOfDay"].length-1]/=stats["totalSolved"]
     for(var j=0;j<7;j++){
@@ -267,6 +293,8 @@ function dataReady(){
   console.log(stats)
 }
 
+
+//displays board on canvas
 function loadBoard(dateStr){
     try{clearTimeout(replayTimeout);}catch(err){}
   var puzzle=xWordData[toNYTDateFormat(new Date(dateStr))]
@@ -301,11 +329,10 @@ function loadBoard(dateStr){
     }
   }
   loadBoardGraph(puzzle)
-
 }
+
+//shows grahp of squarses filled vs time on canvas
 function loadBoardGraph(puzzle){
-
-
   var c=$("#puzzleGraph")[0]
   c.width=700;
   c.height=400;
@@ -334,7 +361,6 @@ function loadBoardGraph(puzzle){
   ctx.font="20px serif";
 
   ctx.fillText("Time", graphX+graphWidth/2,(c.height-(graphY+graphHeight))/1.5+(graphY+graphHeight))
-  console.log(puzzle)
 
   for(var i=0;i<=100;i+=20){
     ctx.fillText(i+"%",graphX*0.8,graphY+graphHeight-(i/100)*graphHeight)
@@ -366,6 +392,8 @@ function loadBoardGraph(puzzle){
   }
   ctx.stroke()
 }
+
+//draws a line of the graph during replay
 function drawBoardGraphLine(time,puzzle){
   var c=$("#puzzleGraph")[0]
 
@@ -385,6 +413,7 @@ function watchReplay(){
   try{clearTimeout(replayTimeout);}catch(err){}
   replayTimeout=setTimeout(function(){replay(0,10)},100)
 }
+
 function replay(time,increment){
   puzzle=xWordData[toNYTDateFormat(new Date($("#datepicker").val()))]
 
@@ -437,7 +466,7 @@ function updateHTML(){
   $("#solveRate").html(Math.floor(stats["solvePercent"]*100)+"%")
   $("#firstPuzzle").html(reformatDate(stats["first"]))
   $("#timeSpent").html(formatSeconds(stats["totalSolveTime"]))
-  $("#averageTimeOfDay").html(formatTime(stats["averageTimeOfDay"]))
+  $("#averageTimeOfDay").html(formatTime(stats["medianTimeOfDay"]))
   $("#fastestTime").html(formatSeconds(stats["fastestTime"]))
   $("#fastestTimeDay").html(reformatDate(stats["fastest"]))
   $("#slowestTime").html(formatSeconds(stats["slowestTime"]))

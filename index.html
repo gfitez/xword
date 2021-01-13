@@ -47,7 +47,7 @@
       <span class="stat" id="timeSpent" style='font-size:1.5vw'>100</span>
     </div>
     <div class="col border border-dark">
-      <div class="statTitle">Average Time of Day:</div>
+      <div class="statTitle">Median Time of Day:</div>
       <span class="stat medText" id="averageTimeOfDay"></span>
     </div>
     <div class="col bg-dark text-light border border-dark">
@@ -165,9 +165,10 @@ function addDatePicker(){
 <style>
 .statRow{
   font-size:1.5rem;
-  height:250px;
+  height:300px;
   text-align: center;
   font-family:apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  overflow-y:visible;
 }
 .stat{
   height:250px;
@@ -177,7 +178,7 @@ function addDatePicker(){
   font-size:4vw;
 }
 .medText{
-  font-size:3vw;
+  font-size:2.8vw;
 }
 .statTitle{
   font-weight:800;
